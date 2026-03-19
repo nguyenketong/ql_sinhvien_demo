@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: student-management
+    env: docker
+    plan: free
+    branch: main
+    healthCheckPath: /students
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: PORT
+        value: 8080

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Sinh viên</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; margin-bottom: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn { padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block; cursor: pointer; border: none; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-primary:hover { background: #0056b3; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-warning:hover { background: #e0a800; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #007bff; color: white; }
+        tr:hover { background: #f5f5f5; }
+        .actions { display: flex; gap: 10px; }
+        .empty { text-align: center; padding: 40px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Quản lý Sinh viên - Trường ĐH Trà Vinh</h1>
+            <a th:href="@{/students/new}" class="btn btn-primary">+ Thêm sinh viên</a>
+        </div>
+        
+        <div th:if="${students.isEmpty()}" class="empty">
+            <p>Chưa có sinh viên nào. Hãy thêm sinh viên mới!</p>
+        </div>
+        
+        <table th:if="${!students.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>Mã SV</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Khoa</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="student : ${students}">
+                    <td th:text="${student.studentCode}"></td>
+                    <td th:text="${student.fullName}"></td>
+                    <td th:text="${student.email}"></td>
+                    <td th:text="${student.department}"></td>
+                    <td class="actions">
+                        <a th:href="@{/students/edit/{id}(id=${student.id})}" class="btn btn-warning">Sửa</a>
+                        <a th:href="@{/students/delete/{id}(id=${student.id})}" 
+                           class="btn btn-danger"
+                           onclick="return confirm('Bạn có chắc muốn xóa sinh viên này?')">Xóa</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
