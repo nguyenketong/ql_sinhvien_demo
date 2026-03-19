@@ -65,8 +65,8 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ secrets.DOCKER_USERNAME }}/student-management:latest
-          ${{ secrets.DOCKER_USERNAME }}/student-management:${{ github.sha }}
+          tong1603/student-management:latest
+          tong1603/student-management:${{ github.sha }}
   
   # Job 3: Deploy to Render (chỉ chạy khi merge vào main)
   continuous-deployment:
