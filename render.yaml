@@ -4,9 +4,13 @@ services:
     env: docker
     plan: free
     branch: main
-    healthCheckPath: /students
+    healthCheckPath: /login
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       - key: PORT
         value: 8080
+      - key: JDBC_DATABASE_URL
+        fromDatabase:
+          name: student-db
+          property: connectionString
