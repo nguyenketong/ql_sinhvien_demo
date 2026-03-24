@@ -1,35 +1,97 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý Sinh viên</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h1 { color: #333; margin-bottom: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header h1 { font-size: 24px; }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .btn-logout {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.4); }
+        .container { max-width: 1200px; margin: 30px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h2 { color: #333; }
         .btn { padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block; cursor: pointer; border: none; }
-        .btn-primary { background: #007bff; color: white; }
-        .btn-primary:hover { background: #0056b3; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; }
         .btn-warning { background: #ffc107; color: black; }
         .btn-warning:hover { background: #e0a800; }
         .btn-danger { background: #dc3545; color: white; }
         .btn-danger:hover { background: #c82333; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #007bff; color: white; }
+        th { background: #667eea; color: white; }
         tr:hover { background: #f5f5f5; }
         .actions { display: flex; gap: 10px; }
         .empty { text-align: center; padding: 40px; color: #666; }
+        .role-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .role-admin { background: #dc3545; color: white; }
+        .role-teacher { background: #ffc107; color: black; }
+        .role-student { background: #28a745; color: white; }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1>🎓 Quản lý Sinh viên - Trường ĐH Trà Vinh</h1>
+        <div class="user-info">
+            <div class="user-badge">
+                <span sec:authentication="principal.username"></span>
+                <span class="role-badge" 
+                      th:classappend="${#authorization.expression('hasRole(''ADMIN'')') ? 'role-admin' : 
+                                       (#authorization.expression('hasRole(''TEACHER'')') ? 'role-teacher' : 'role-student')}">
+                    <span sec:authorize="hasRole('ADMIN')">ADMIN</span>
+                    <span sec:authorize="hasRole('TEACHER')">GIẢNG VIÊN</span>
+                    <span sec:authorize="hasRole('STUDENT')">SINH VIÊN</span>
+                </span>
+            </div>
+            <form th:action="@{/logout}" method="post" style="margin: 0;">
+                <button type="submit" class="btn-logout">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+    
     <div class="container">
-        <div class="header">
-            <h1>Quản lý Sinh viên - Trường ĐH Trà Vinh</h1>
-            <a th:href="@{/students/new}" class="btn btn-primary">+ Thêm sinh viên</a>
+        <div class="page-header">
+            <h2>Danh sách Sinh viên</h2>
+            <a th:href="@{/students/new}" class="btn btn-primary" sec:authorize="hasRole('ADMIN')">+ Thêm sinh viên</a>
         </div>
         
         <div th:if="${students.isEmpty()}" class="empty">
@@ -43,7 +105,7 @@
                     <th>Họ tên</th>
                     <th>Email</th>
                     <th>Khoa</th>
-                    <th>Thao tác</th>
+                    <th sec:authorize="hasAnyRole('ADMIN', 'TEACHER')">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,10 +114,13 @@
                     <td th:text="${student.fullName}"></td>
                     <td th:text="${student.email}"></td>
                     <td th:text="${student.department}"></td>
-                    <td class="actions">
-                        <a th:href="@{/students/edit/{id}(id=${student.id})}" class="btn btn-warning">Sửa</a>
+                    <td class="actions" sec:authorize="hasAnyRole('ADMIN', 'TEACHER')">
+                        <a th:href="@{/students/edit/{id}(id=${student.id})}" 
+                           class="btn btn-warning"
+                           sec:authorize="hasAnyRole('ADMIN', 'TEACHER')">Sửa</a>
                         <a th:href="@{/students/delete/{id}(id=${student.id})}" 
                            class="btn btn-danger"
+                           sec:authorize="hasRole('ADMIN')"
                            onclick="return confirm('Bạn có chắc muốn xóa sinh viên này?')">Xóa</a>
                     </td>
                 </tr>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Quản lý Sinh viên</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 { 
+            color: #333; 
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group { margin-bottom: 20px; }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            color: #555; 
+            font-weight: bold;
+        }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 14px;
+        }
+        input:focus { 
+            outline: none; 
+            border-color: #667eea; 
+        }
+        .btn { 
+            width: 100%;
+            padding: 12px; 
+            background: #667eea; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .btn:hover { background: #5568d3; }
+        .alert { 
+            padding: 10px; 
+            margin-bottom: 20px; 
+            border-radius: 5px;
+            text-align: center;
+        }
+        .alert-error { 
+            background: #fee; 
+            color: #c33; 
+            border: 1px solid #fcc;
+        }
+        .alert-success { 
+            background: #efe; 
+            color: #3c3; 
+            border: 1px solid #cfc;
+        }
+        .demo-accounts {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .demo-accounts h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .demo-accounts p {
+            margin: 5px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Đăng nhập</h1>
+        <p class="subtitle">Hệ thống Quản lý Sinh viên - ĐH Trà Vinh</p>
+        
+        <div th:if="${param.error}" class="alert alert-error">
+            Tên đăng nhập hoặc mật khẩu không đúng!
+        </div>
+        
+        <div th:if="${param.logout}" class="alert alert-success">
+            Đã đăng xuất thành công!
+        </div>
+        
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Tên đăng nhập:</label>
+                <input type="text" id="username" name="username" required autofocus />
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Mật khẩu:</label>
+                <input type="password" id="password" name="password" required />
+            </div>
+            
+            <button type="submit" class="btn">Đăng nhập</button>
+        </form>
+        
+        <div class="demo-accounts">
+            <h3>🔑 Tài khoản demo:</h3>
+            <p><strong>Admin:</strong> admin / admin123</p>
+            <p><strong>Giảng viên:</strong> teacher / teacher123</p>
+            <p><strong>Sinh viên:</strong> student / student123</p>
+        </div>
+    </div>
+</body>
+</html>
